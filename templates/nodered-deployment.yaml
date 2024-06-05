@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodered
+spec:
+  replicas: {{ .Values.nodered.replicaCount }}
+  selector:
+    matchLabels:
+      app: nodered
+  template:
+    metadata:
+      labels:
+        app: nodered
+    spec:
+      containers:
+        - name: nodered
+          image: "{{ .Values.nodered.image }}:{{ .Values.nodered.tag }}"
+          ports:
+            - containerPort: 1880
+          volumeMounts:
+            - name: nodered-data
+              mountPath: /data
+      volumes:
+        - name: nodered-data
+          persistentVolumeClaim:
+            claimName: nodered-pvc

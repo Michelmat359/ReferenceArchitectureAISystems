@@ -1,0 +1,26 @@
+{{- if .Values.nodered.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nodered
+  annotations:
+    {{- range $key, $value := .Values.nodered.ingress.annotations }}
+      {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  rules:
+    {{- range .Values.nodered.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ . }}
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: nodered
+                port:
+                  number: {{ $.Values.nodered.service.port }}
+          {{- end }}
+    {{- end }}
+{{- end }}
